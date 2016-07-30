@@ -1,0 +1,16 @@
+PODS:
+  - AYRecord (1.0.0)
+
+DEPENDENCIES:
+  - AYRecord (from `../`)
+
+EXTERNAL SOURCES:
+  AYRecord:
+    :path: ../
+
+SPEC CHECKSUMS:
+  AYRecord: e39738d5e57b3c70d392d19dfed58c8158730bce
+
+PODFILE CHECKSUM: d90c4825607673b75d45bbb0faae9256d8137881
+
+COCOAPODS: 1.0.0
