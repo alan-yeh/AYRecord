@@ -3,19 +3,19 @@
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/9/28.
-//  Copyright © 2015年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import <AYRecord/AYDbAttribute.h>
 
-@class AYPage<M>;
-@class AYSql;
+@class AYDbPage<M>;
+@class AYDbSql;
 
 NS_ASSUME_NONNULL_BEGIN
 /**
  *  Table Mapping
  */
-@interface AYModel<M> : AYDbAttribute
+@interface AYDbModel<M> : AYDbAttribute
 @property (nonatomic, assign) NSInteger ID;/**< default column, primary key. */
 
 + (instancetype)dao;/**< Data Access Object. DO NOT use it to store info.*/
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Provide methods to visit database.
  */
-@interface AYModel<M>(Operation)
+@interface AYDbModel<M>(Operation)
 - (BOOL)save;/**< Save model. */
 - (BOOL)update;/**< Update model. */
 - (BOOL)updateAll;/**< Update all attributes. */
@@ -52,20 +52,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Update Models
 - (BOOL)update:(NSString *)sql, ...;/**< Execute update, insert or delete sql statement. */
-- (BOOL)updateWithSql:(AYSql *)sq;/**< Execute update, insert or delete sql statement. */
+- (BOOL)updateWithSql:(AYDbSql *)sq;/**< Execute update, insert or delete sql statement. */
 
 #pragma mark - Find Models
 - (NSArray<M> *)find:(NSString *)sql, ...;/**< Find models. */
-- (NSArray<M> *)findWithSql:(AYSql *)sql;/**< Find models. */
+- (NSArray<M> *)findWithSql:(AYDbSql *)sql;/**< Find models. */
 - (NSArray<M> *)findByCondition:(NSString *)condition, ...;/**< Find model with condition. [[Model dao] findWithCondition:@"age > ? and weight < ?", @30, @100] */
 - (nullable M)findFirstByCondition:(NSString *)condition, ...;/**< Find first model. I recomment add "limit 1" in your conditions. */
 - (NSArray<M> *)findAll;/**< Find all model in table. */
 - (nullable M)findFirst:(NSString *)sql, ...;/**< Find first model. I recomment add "limit 1" in your sql. */
-- (nullable M)findFirstWithSql:(AYSql *)sql;/**< Find first model. I recomment add "limit 1" in your sql. */
+- (nullable M)findFirstWithSql:(AYDbSql *)sql;/**< Find first model. I recomment add "limit 1" in your sql. */
 - (nullable M)findById:(NSInteger)idValue;/**< Find model by id. */
 - (nullable M)findById:(NSInteger)idValue loadColumns:(NSString *)columns;/**< Find model by id and load specific columns only. */
 - (id)queryOne:(NSString *)sql, ...;/**< Execute sql query just return one column.*/
-- (id)queryOneWithSql:(AYSql *)sql;/**< Execute sql query just return one column.*/
+- (id)queryOneWithSql:(AYDbSql *)sql;/**< Execute sql query just return one column.*/
 /**
  *  Paginate.
  *
@@ -75,22 +75,22 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param where     the sql statement excluded select part and the parameters of sql.
  *
  */
-- (AYPage<M> *)paginate:(NSInteger)pageIndex size:(NSInteger)pageSize withSelect:(NSString *)select where:(NSString *)where, ...;
+- (AYDbPage<M> *)paginate:(NSInteger)pageIndex size:(NSInteger)pageSize withSelect:(NSString *)select where:(NSString *)where, ...;
 @end
 
-@interface AYModel<M> (Sql)
-- (AYSql *)saveSql;/**< Get sql of save operation.*/
-- (AYSql *)updateSql;/**< Get sql of update operation. */
-- (AYSql *)deleteSql;/**< Get sql of delete operation. */
+@interface AYDbModel<M> (Sql)
+- (AYDbSql *)saveSql;/**< Get sql of save operation.*/
+- (AYDbSql *)updateSql;/**< Get sql of update operation. */
+- (AYDbSql *)deleteSql;/**< Get sql of delete operation. */
 @end
 
 /**
  *  Config table.
  */
-@interface AYModel<M>(Configuration)
+@interface AYDbModel<M>(Configuration)
 + (NSString *)tableName;/**< Return table name of the model. default is class name. */
 + (NSInteger)version;/**< Return current version of the model. default is 1.*/
 + (NSString *)propertyForColumn:(NSString *)column;/**< Return property of column. */
-+ (NSArray<AYSql *> *)migrateForm:(NSInteger)oldVersion to:(NSInteger)newVersion;/**< Return sqls for migration. default is nil.*/
++ (NSArray<AYDbSql *> *)migrateForm:(NSInteger)oldVersion to:(NSInteger)newVersion;/**< Return sqls for migration. default is nil.*/
 @end
 NS_ASSUME_NONNULL_END

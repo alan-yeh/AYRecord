@@ -29,14 +29,14 @@ static BOOL _showSql = NO;
     _showSql = showSql;
 }
 
-- (void)showSql:(AYSql *)sql{
+- (void)showSql:(AYDbSql *)sql{
     static NSDateFormatter *formatter = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
     });
-    doIf(_showSql, sql_printf(@"📕📕%@ AYRecord: \n%@\n", [formatter stringFromDate:[NSDate date]], [sql debugDescription]));
+    doIf(_showSql, ay_record_printf(@"📕📕%@ AYRecord: \n%@\n", [formatter stringFromDate:[NSDate date]], [sql debugDescription]));
 }
 
 - (instancetype)init{
@@ -73,12 +73,12 @@ static BOOL _showSql = NO;
         if (result == SQLITE_BUSY || result == SQLITE_LOCKED) {
             sqlite3_stmt *AYtmt;
             while ((AYtmt = sqlite3_next_stmt(_db, nil))) {
-                sql_printf(@"AYRecord: Closing leaked statement");
+                ay_record_printf(@"AYRecord: Closing leaked statement");
                 sqlite3_finalize(AYtmt);
                 retry = YES;
             }
         }else if (result != SQLITE_OK){
-            sql_printf(@"AYRecord: Close statement failed\n{\n   Datasource: %@\n}", self.datasource);
+            ay_record_printf(@"AYRecord: Close statement failed\n{\n   Datasource: %@\n}", self.datasource);
         }
     } while (retry);
     _db = nil;
@@ -103,7 +103,7 @@ static BOOL _showSql = NO;
 @end
 
 @implementation AYDbConnection(Statement)
-- (AYDbStatement *)prepareStatement:(AYSql *)sql{
+- (AYDbStatement *)prepareStatement:(AYDbSql *)sql{
     [self showSql:sql];
     
     AYParameterAssert(sql != nil && sql.sql.length > 0);
@@ -142,7 +142,7 @@ static BOOL _showSql = NO;
     if ((!obj) || [obj isKindOfClass:[NSNull class]]) {
         sqlite3_bind_null(AYtmt, idx);
     }else{
-        id<AYTypeConvertor> convertor = [AYDbKit convertorForObject:obj];
+        id<AYDbTypeConvertor> convertor = [AYDbKit convertorForObject:obj];
         [convertor bindObject:obj toColumn:idx inStatement:AYtmt];
     }
 }
@@ -156,19 +156,19 @@ static BOOL _showSql = NO;
 
 - (void)beginTransaction{
     AYDbAssert(!self.isInTransaction, @"Should not repeat beginning a transaction.", nil, nil, self.datasource);
-    AYDbAssert([[self prepareStatement:[AYSql buildSql:@"begin exclusive transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
+    AYDbAssert([[self prepareStatement:[AYDbSql buildSql:@"begin exclusive transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
     self->_isInTransaction = YES;
 }
 
 - (void)commit{
     AYDbAssert(self.isInTransaction, @"Should begin a transaction before commit.", nil, nil, self.datasource);
-    AYDbAssert([[self prepareStatement:[AYSql buildSql:@"commit transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
+    AYDbAssert([[self prepareStatement:[AYDbSql buildSql:@"commit transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
     self->_isInTransaction = NO;
 }
 
 - (void)rollback{
     AYDbAssert(self.isInTransaction, @"Should begin a transaction before rollback.", nil, nil, self.datasource);
-    AYDbAssert([[self prepareStatement:[AYSql buildSql:@"rollback transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
+    AYDbAssert([[self prepareStatement:[AYDbSql buildSql:@"rollback transaction"]] executeUpdate], self.lastErrorMessage, nil, nil, self.datasource);
     self->_isInTransaction = NO;
 }
 @end
@@ -218,14 +218,14 @@ static BOOL _showSql = NO;
             break;
         case SQLITE_BUSY:
         case SQLITE_LOCKED:
-            sql_printf(@"AYRecord: Database is busy\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
+            ay_record_printf(@"AYRecord: Database is busy\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
             break;
         case SQLITE_ERROR:
         case SQLITE_MISUSE:
-            sql_printf(@"AYRecord: Error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
+            ay_record_printf(@"AYRecord: Error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
             break;
         default:
-            sql_printf(@"AYRecord: Unknown error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
+            ay_record_printf(@"AYRecord: Unknown error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
             break;
     }
     
@@ -272,7 +272,7 @@ static BOOL _showSql = NO;
     switch (result) {
         case SQLITE_ERROR:
         case SQLITE_MISUSE:
-            sql_printf(@"AYRecord: Error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
+            ay_record_printf(@"AYRecord: Error calling sqlite3_step\n{\n   Error: %@\n   Result Code: %@\n   Sql: %@\n   Datasource: %@\n}\n", _connection.lastErrorMessage, @(result), _sql, _connection.datasource);
             break;
         case SQLITE_ROW:
             AYDbAssert(NO, @"A executeUpdate is being called with a query string", nil, _sql, _connection.datasource);

@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AYTypeConvertor.h"
+#import "AYDbTypeConvertor.h"
 
-@interface AYCGSizeConvertor : NSObject<AYTypeConvertor>
+@interface AYCGSizeConvertor : NSObject<AYDbTypeConvertor>
 
 @end

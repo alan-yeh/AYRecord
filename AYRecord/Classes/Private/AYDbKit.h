@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 @class AYDbConfig;
-@class AYTable;
-@protocol AYTypeConvertor;
+@class AYDbTable;
+@protocol AYDbTypeConvertor;
 
 NS_ASSUME_NONNULL_BEGIN
 @interface AYDbKit : NSObject
@@ -20,16 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 + (void)addConfig:(AYDbConfig *)config;
 + (void)addModel:(Class)model toConfigMapping:(AYDbConfig *)config;
-+ (void)addModel:(Class)model toTableMapping:(AYTable *)table;
++ (void)addModel:(Class)model toTableMapping:(AYDbTable *)table;
 
 + (AYDbConfig *)configForName:(NSString *)configName;
 + (AYDbConfig *)configForModel:(Class)model;
-+ (AYTable *)tableForModel:(Class)model;
-+ (AYTable *)tableForName:(NSString *)tableName;
++ (AYDbTable *)tableForModel:(Class)model;
++ (AYDbTable *)tableForName:(NSString *)tableName;
 
 #pragma mark -
-+ (id<AYTypeConvertor>)convertorForType:(NSString *)typeEncoding;
-+ (id<AYTypeConvertor>)convertorForObject:(id)obj;
-+ (void)addConvertor:(id<AYTypeConvertor>)convertor;
++ (id<AYDbTypeConvertor>)convertorForType:(NSString *)typeEncoding;
++ (id<AYDbTypeConvertor>)convertorForObject:(id)obj;
++ (void)addConvertor:(id<AYDbTypeConvertor>)convertor;
 @end
 NS_ASSUME_NONNULL_END

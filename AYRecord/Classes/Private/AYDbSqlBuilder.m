@@ -8,10 +8,10 @@
 
 #import "AYRecord_private.h"
 
-@implementation AYSqlBuilder
-+ (AYSql *)forCreate:(AYTable *)table{
+@implementation AYDbSqlBuilder
++ (AYDbSql *)forCreate:(AYDbTable *)table{
     NSMutableString *createSql = [NSMutableString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (ID INTEGER PRIMARY KEY AUTOINCREMENT", table.name];
-    for (AYColumn *column in table.cols) {
+    for (AYDbColumn *column in table.cols) {
         continueIf([column.name.lowercaseString isEqualToString:@"ID".lowercaseString]);
         [createSql appendFormat:@", %@ %@", column.name, column.convertor.dataType];
         
@@ -21,28 +21,28 @@
         }
     }
     [createSql appendString:@")"];
-    return [AYSql buildSql:createSql];
+    return [AYDbSql buildSql:createSql];
 }
 
-+ (AYSql *)forAddColumn:(AYColumn *)column toTable:(AYTable *)table{
++ (AYDbSql *)forAddColumn:(AYDbColumn *)column toTable:(AYDbTable *)table{
     NSMutableString *addSql = [NSMutableString stringWithFormat:@"ALTER TABLE %@ ADD %@ %@", table.name, column.name, column.convertor.dataType];
     NSString *columnProperty = [table.type propertyForColumn:column.name];
     if (columnProperty.length > 0) {
         [addSql appendFormat:@" %@", columnProperty];
     }
-    return [AYSql buildSql:addSql];
+    return [AYDbSql buildSql:addSql];
 }
 
-+ (AYSql *)forRowCount:(AYTable *)table byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
++ (AYDbSql *)forRowCount:(AYDbTable *)table byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
     NSMutableString *rowCountSql = [NSMutableString stringWithFormat:@"SELECT COUNT(1) FROM %@", table.name];
     if (condition.length > 0) {
         [rowCountSql appendString:@" WHERE "];
         [rowCountSql appendString:condition];
     }
-    return [AYSql buildSql:rowCountSql withArgs:args];
+    return [AYDbSql buildSql:rowCountSql withArgs:args];
 }
 
-+ (AYSql *)forSave:(AYTable *)table attrs:(id<AYDictionaryProtocol>)attrs{
++ (AYDbSql *)forSave:(AYDbTable *)table attrs:(id<AYDictionaryProtocol>)attrs{
     NSMutableArray *params = [NSMutableArray new];
     NSMutableString *sqlStr = [NSMutableString stringWithFormat:@"INSERT INTO %@ (", table.name];
     NSMutableString *args = [[NSMutableString alloc] initWithString:@") VALUES("];
@@ -61,10 +61,10 @@
     }
     [sqlStr appendString:args];
     [sqlStr appendString:@")"];
-    return [AYSql buildSql:sqlStr withArgs:params];
+    return [AYDbSql buildSql:sqlStr withArgs:params];
 }
 
-+ (AYSql *)forUpdate:(AYTable *)table attrs:(id<AYDictionaryProtocol>)attrs modifyFlag:(NSSet<NSString *> *)modifyFlags{
++ (AYDbSql *)forUpdate:(AYDbTable *)table attrs:(id<AYDictionaryProtocol>)attrs modifyFlag:(NSSet<NSString *> *)modifyFlags{
     NSMutableArray *params = [NSMutableArray new];
     NSMutableString *sqlStr = [NSMutableString stringWithFormat:@"UPDATE %@ SET ", table.name];
     
@@ -87,10 +87,10 @@
     AYAssert(idValue, @"can't find primark key in model.");
     [params addObject:idValue];
     
-    return [AYSql buildSql:sqlStr withArgs:params];
+    return [AYDbSql buildSql:sqlStr withArgs:params];
 }
 
-+ (AYSql *)forReplace:(AYTable *)table attrs:(id<AYDictionaryProtocol>)attrs{
++ (AYDbSql *)forReplace:(AYDbTable *)table attrs:(id<AYDictionaryProtocol>)attrs{
     NSMutableArray *params = [NSMutableArray new];
     NSMutableString *sqlStr = [NSMutableString stringWithFormat:@"REPLACE INTO %@ (", table.name];
     NSMutableString *args = [[NSMutableString alloc] initWithString:@") VALUES("];
@@ -110,25 +110,25 @@
     }
     [sqlStr appendString:args];
     [sqlStr appendString:@")"];
-    return [AYSql buildSql:sqlStr withArgs:params];
+    return [AYDbSql buildSql:sqlStr withArgs:params];
 }
 
-+ (AYSql *)forDelete:(AYTable *)table byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
++ (AYDbSql *)forDelete:(AYDbTable *)table byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
     NSMutableString *sql = [NSMutableString stringWithFormat:@"DELETE FROM %@", table.name];
     if (condition.length) {
         [sql appendString:@" WHERE "];
         [sql appendString:condition];
     }
-    return [AYSql buildSql:sql withArgs:args];
+    return [AYDbSql buildSql:sql withArgs:args];
 }
 
-+ (AYSql *)forFind:(AYTable *)table columns:(NSString *)columns byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
++ (AYDbSql *)forFind:(AYDbTable *)table columns:(NSString *)columns byCondition:(NSString *)condition withArgs:(NSArray<id> *)args{
     NSMutableString *sql = [NSMutableString stringWithString:@"SELECT "];
     if (columns.length > 0) {
         [sql appendString:columns];
     }else{
         NSMutableString *cols = [NSMutableString new];
-        for (AYColumn *column in table.cols) {
+        for (AYDbColumn *column in table.cols) {
             doIf(cols.length, [cols appendString:@", "]);
             [cols appendFormat:@"%@", column.name];
         }
@@ -140,12 +140,12 @@
     if (condition.length > 0) {
         [sql appendFormat:@" WHERE %@", condition];
     }
-    return [AYSql buildSql:sql withArgs:args];
+    return [AYDbSql buildSql:sql withArgs:args];
 }
 
-+ (AYSql *)forPaginateIndex:(NSInteger)pageIndex size:(NSInteger)pageSize withSelect:(NSString *)select where:(NSString *)where args:(NSArray *)args{
++ (AYDbSql *)forPaginateIndex:(NSInteger)pageIndex size:(NSInteger)pageSize withSelect:(NSString *)select where:(NSString *)where args:(NSArray *)args{
     NSInteger offset = pageSize * (pageIndex - 1);
     NSString *sql = [NSString stringWithFormat:@"%@ %@ LIMIT %@ OFFSET %@", select, where, @(pageSize), @(offset)];
-    return [AYSql buildSql:sql withArgs:args];
+    return [AYDbSql buildSql:sql withArgs:args];
 }
 @end

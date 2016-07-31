@@ -8,4 +8,4 @@
 
 #import <Foundation/Foundation.h>
 
-void sql_printf(NSString *format, ...);
+void ay_record_printf(NSString *format, ...);

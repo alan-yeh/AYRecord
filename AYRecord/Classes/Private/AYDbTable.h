@@ -1,5 +1,5 @@
 //
-//  AYTable.h
+//  AYDbTable.h
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/9/28.
@@ -7,16 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AYModel.h"
+#import "AYDbModel.h"
 
 @protocol AYSetProtocol;
-@class AYTable;
-@class AYColumn;
+@class AYDbTable;
+@class AYDbColumn;
 
 /**
  *  table structure
  */
-@interface AYTable : AYModel<AYTable *>
+@interface AYDbTable : AYDbModel<AYDbTable *>
 + (instancetype)buildTableWithModel:(Class)model;
 
 @property (nonatomic, copy) NSString *name;
@@ -26,8 +26,8 @@
 @property (nonatomic, assign) NSInteger version;
 
 
-@property (nonatomic, readonly) NSArray<AYColumn *> *cols;
+@property (nonatomic, readonly) NSArray<AYDbColumn *> *cols;
 
 - (BOOL)hasColumn:(NSString *)column;
-- (AYColumn *)columnForName:(NSString *)name;
+- (AYDbColumn *)columnForName:(NSString *)name;
 @end

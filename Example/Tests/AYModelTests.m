@@ -1,5 +1,5 @@
 //
-//  AYModelTests.m
+//  AYDbModelTests.m
 //  AYRecord
 //
 //  Created by PoiSon on 16/7/30.
@@ -11,11 +11,11 @@
 #import "Teacher.h"
 #import "None.h"
 
-@interface AYModelTests : XCTestCase
+@interface AYDbModelTests : XCTestCase
 
 @end
 
-@implementation AYModelTests
+@implementation AYDbModelTests
 + (void)setUp{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docDir = [paths objectAtIndex:0];
@@ -28,9 +28,9 @@
     [context registerModel:[Student class]];
     [context initialize];
     
-    NSMutableArray<AYSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
+    NSMutableArray<AYDbSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
     for (NSInteger i = 0; i < 20; i ++) {
-        [inserts addObject:[AYSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
+        [inserts addObject:[AYDbSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
     }
     NSAssert([[AYDb main] batchSqls:inserts], @"batch fail");
 }
@@ -136,7 +136,7 @@
 }
 /** 测试分页. */
 - (void)testPage{
-    AYPage<Student *> *page = [[Student dao] paginate:1 size:10 withSelect:@"select *" where:@"from Student where 1 = ?", @(1)];
+    AYDbPage<Student *> *page = [[Student dao] paginate:1 size:10 withSelect:@"select *" where:@"from Student where 1 = ?", @(1)];
     XCTAssertNotNil(page, @"返回值不能为空");
     XCTAssert(page.list, @"返回值不能为空");
     XCTAssert(page.list.count, @"记录不能为空");
@@ -145,45 +145,45 @@
 }
 
 
-- (void)testPerformanceInsert{
-    [self measureBlock:^{
-        [[AYDb main] tx:^BOOL(AYDb * _Nonnull db) {
-            for (NSUInteger i = 0; i < 3000; i ++) {
-                Student *newStu = [Student new];
-                [newStu setValue:[NSString stringWithFormat:@"张%@", @(i)] forKey:@"name"];
-                [newStu setValue:@(1) forKey:@"age"];
-                [newStu save];
-            }
-            return YES;
-        }];
-    }];
-}
-
-- (void)testPerformanceInsert2{
-    [self measureBlock:^{
-        [[AYDb main] tx:^BOOL(AYDb * _Nonnull db) {
-            for (NSUInteger i = 0; i < 3000; i ++) {
-                Student *newStu = [Student new];
-                [newStu setValue:[NSString stringWithFormat:@"张%@", @(i)] forKey:@"name"];
-                [newStu setValue:@(1) forKey:@"age"];
-                [newStu save];
-            }
-            return YES;
-        }];
-    }];
-}
-
-- (void)testPerformanceSelect{
-    [[Student dao] deleteAll];
-    NSMutableArray<AYSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
-    for (NSInteger i = 0; i < 3000; i ++) {
-        [inserts addObject:[AYSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
-    }
-    [[AYDb new] batchSqls:inserts];
-    [self measureBlock:^{
-        [[Student dao] findAll];
-    }];
-}
+//- (void)testPerformanceInsert{
+//    [self measureBlock:^{
+//        [[AYDb main] tx:^BOOL(AYDb * _Nonnull db) {
+//            for (NSUInteger i = 0; i < 3000; i ++) {
+//                Student *newStu = [Student new];
+//                [newStu setValue:[NSString stringWithFormat:@"张%@", @(i)] forKey:@"name"];
+//                [newStu setValue:@(1) forKey:@"age"];
+//                [newStu save];
+//            }
+//            return YES;
+//        }];
+//    }];
+//}
+//
+//- (void)testPerformanceInsert2{
+//    [self measureBlock:^{
+//        [[AYDb main] tx:^BOOL(AYDb * _Nonnull db) {
+//            for (NSUInteger i = 0; i < 3000; i ++) {
+//                Student *newStu = [Student new];
+//                [newStu setValue:[NSString stringWithFormat:@"张%@", @(i)] forKey:@"name"];
+//                [newStu setValue:@(1) forKey:@"age"];
+//                [newStu save];
+//            }
+//            return YES;
+//        }];
+//    }];
+//}
+//
+//- (void)testPerformanceSelect{
+//    [[Student dao] deleteAll];
+//    NSMutableArray<AYDbSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
+//    for (NSInteger i = 0; i < 3000; i ++) {
+//        [inserts addObject:[AYDbSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
+//    }
+//    [[AYDb new] batchSqls:inserts];
+//    [self measureBlock:^{
+//        [[Student dao] findAll];
+//    }];
+//}
 
 - (void)testNoneRegister{
     None *none = [None new];

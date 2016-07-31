@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol AYContainerFactory;
-@protocol AYTypeConvertor;
+@protocol AYDbTypeConvertor;
 
 @interface AYDbContext : NSObject
 - (instancetype)init AYRecord_API_UNAVAILABLE("use initWithDatasource:forConfig: instead");
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *datasource;/**< File of sqlite database. Create database file if not exists. */
 
 - (void)registerModel:(Class)model;/**< Register model to context. */
-- (void)registerConvertor:(id<AYTypeConvertor>)convertor;/** Register type convertor to context. */
+- (void)registerConvertor:(id<AYDbTypeConvertor>)convertor;/** Register type convertor to context. */
 - (void)initialize;/**< Initialize this context. */
 @end
 

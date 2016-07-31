@@ -10,7 +10,7 @@
 
 @class None;
 
-@interface None : AYModel<None *>
+@interface None : AYDbModel<None *>
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, assign) int age;
 @end

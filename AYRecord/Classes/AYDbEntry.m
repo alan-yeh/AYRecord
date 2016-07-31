@@ -3,7 +3,7 @@
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/10/10.
-//  Copyright © 2015年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import "AYRecord_private.h"

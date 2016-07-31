@@ -1,5 +1,5 @@
 //
-//  AYTable.m
+//  AYDbTable.m
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/9/28.
@@ -9,10 +9,10 @@
 #import "AYRecord_private.h"
 #import <objc/runtime.h>
 
-@implementation AYTable{
+@implementation AYDbTable{
     NSMutableSet<NSString *> *_column_names;
-    NSArray<AYColumn *> *_cols;
-    NSMapTable<NSString *, AYColumn *> *_columnMappings;
+    NSArray<AYDbColumn *> *_cols;
+    NSMapTable<NSString *, AYDbColumn *> *_columnMappings;
 }
 /** 获取objc_property_t的属性值 */
 NSString *property_getAttrValue(objc_property_t property, const char *attributeName){
@@ -29,13 +29,13 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
 }
 
 + (instancetype)buildTableWithModel:(Class)model{
-    AYParameterAssert([model isSubclassOfClass:AYModel.class]);
-    AYTable *table = [AYTable new];
+    AYParameterAssert([model isSubclassOfClass:AYDbModel.class]);
+    AYDbTable *table = [AYDbTable new];
     
-    NSMutableArray<AYColumn *> *columns = [NSMutableArray array];
+    NSMutableArray<AYDbColumn *> *columns = [NSMutableArray array];
     
     //add ID column to table
-    AYColumn *column = [AYColumn new];
+    AYDbColumn *column = [AYDbColumn new];
     column.name = @"ID";
     column.type = @(@encode(NSInteger));
     [columns addObject:column];
@@ -51,7 +51,7 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
         //dynamic property is for mapping
         continueIf(!isDynamic);
         
-        AYColumn *column = [AYColumn new];
+        AYDbColumn *column = [AYDbColumn new];
         column.name = name;
         column.type = property_getAttrValue(property, "T");
         [columns addObject:column];
@@ -66,16 +66,16 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
     return table;
 }
 
-- (NSArray<AYColumn *> *)cols{
+- (NSArray<AYDbColumn *> *)cols{
     return _cols ?: (_cols = ({
-        NSArray<AYColumn *> * cols;
+        NSArray<AYDbColumn *> * cols;
         NSString *columnsStr = [self stringValueForKey:@"columns"];
         if (columnsStr.length) {
             NSArray<NSDictionary<NSString *, NSString *> *> *colsDic = [NSJSONSerialization JSONObjectWithData:[columnsStr dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
             cols = (colsDic == nil) ? nil : ({
                 NSMutableArray *array = [NSMutableArray new];
                 for (NSDictionary<NSString *, NSString *> *dic in colsDic) {
-                    [array addObject:[[AYColumn alloc] initWithAttributes:dic]];
+                    [array addObject:[[AYDbColumn alloc] initWithAttributes:dic]];
                 }
                 array;
             });
@@ -86,9 +86,9 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
     }));
 }
 
-- (void)setCols:(NSArray<AYColumn *> *)cols{
+- (void)setCols:(NSArray<AYDbColumn *> *)cols{
     NSMutableArray<NSDictionary<NSString *, NSString *> *> *colsDic = [NSMutableArray new];
-    for (AYColumn *column in cols) {
+    for (AYDbColumn *column in cols) {
         [colsDic addObject:column.attributes];
     }
     
@@ -98,17 +98,17 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
     _cols = cols;
 }
 
-- (NSMapTable<NSString *, AYColumn *> *)columnMappings{
+- (NSMapTable<NSString *, AYDbColumn *> *)columnMappings{
     return _columnMappings ?: ({
         _columnMappings = [NSMapTable strongToWeakObjectsMapTable];
-        for (AYColumn *column in self.cols) {
+        for (AYDbColumn *column in self.cols) {
             [_columnMappings setObject:column forKey:[column name].lowercaseString];
         }
         _columnMappings;
     });
 }
 
-- (AYColumn *)columnForName:(NSString *)name{
+- (AYDbColumn *)columnForName:(NSString *)name{
     return [self.columnMappings objectForKey:name.lowercaseString];
 }
 
@@ -119,7 +119,7 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
 - (NSMutableSet<NSString *> *)columnNames{
     return _column_names ?: ({
         _column_names = [NSMutableSet new];
-        for (AYColumn *column in self.cols) {
+        for (AYDbColumn *column in self.cols) {
             [_column_names addObject:column.name.lowercaseString];
         }
         _column_names;
@@ -138,10 +138,10 @@ NSString *property_getAttrValue(objc_property_t property, const char *attributeN
 }
 
 - (NSString *)description{
-    return [NSString stringWithFormat:@"<AYTable %p>:\n{\n   ID : %@,\n   name : %@,\n   type : %@,\n   key : %@,\n   version : %@,\n   columns : %@\n}", self, self[@"ID"], self[@"name"], self[@"type"], self[@"key"], self[@"version"], self.cols];
+    return [NSString stringWithFormat:@"<AYDbTable %p>:\n{\n   ID : %@,\n   name : %@,\n   type : %@,\n   key : %@,\n   version : %@,\n   columns : %@\n}", self, self[@"ID"], self[@"name"], self[@"type"], self[@"key"], self[@"version"], self.cols];
 }
 
 - (NSString *)debugDescription{
-    return [NSString stringWithFormat:@"<AYTable %p>:\n{\n   ID : %@,\n   name : %@,\n   type : %@,\n   key : %@,\n   version : %@,\n   columns : %@\n}", self, self[@"ID"], self[@"name"], self[@"type"], self[@"key"], self[@"version"], self.cols];
+    return [NSString stringWithFormat:@"<AYDbTable %p>:\n{\n   ID : %@,\n   name : %@,\n   type : %@,\n   key : %@,\n   version : %@,\n   columns : %@\n}", self, self[@"ID"], self[@"name"], self[@"type"], self[@"key"], self[@"version"], self.cols];
 }
 @end

@@ -1,14 +1,14 @@
 //
-//  AYSql.m
+//  AYDbSql.m
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/10/22.
-//  Copyright © 2015年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import "AYRecord_private.h"
 
-@implementation AYSql
+@implementation AYDbSql
 + (instancetype)buildSql:(NSString *)sql, ...{
     return [[self alloc] initWithSql:sql withArgs:va_array(sql)];
 }
@@ -26,7 +26,7 @@
 }
 
 - (NSString *)description{
-    return [NSString stringWithFormat:@"<AYSql %p>:{ sql: \"%@\", args: ...<%@ objects>}", self, self.sql, @(self.args.count)];
+    return [NSString stringWithFormat:@"<AYDbSql %p>:{ sql: \"%@\", args: ...<%@ objects>}", self, self.sql, @(self.args.count)];
 }
 
 - (NSString *)debugDescription{
@@ -45,6 +45,6 @@
         [args appendString:@"<0 objects>"];
     }
     
-    return [NSString stringWithFormat:@"<AYSql %p>:\n{\n   sql: \"%@\",\n   args: %@\n}", self, self.sql, args];
+    return [NSString stringWithFormat:@"<AYDbSql %p>:\n{\n   sql: \"%@\",\n   args: %@\n}", self, self.sql, args];
 }
 @end

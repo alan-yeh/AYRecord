@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
-#import "AYAssert.h"
+#import "AYDbAssert.h"
 #import "objc.h"
 #import "AYRecordDefines.h"
 
@@ -23,7 +23,7 @@ AYRecord_EXTERN_STRING_IMP(AYRecordErrorLine)
     
     NSString *fileName = [@(file) lastPathComponent];
     
-    sql_printf(@"%@ %@: %@\nAYRecord: %@\n", [[self formatter] stringFromDate:[NSDate date]], fileName, @(line), description);
+    ay_record_printf(@"%@ %@: %@\nAYRecord: %@\n", [[self formatter] stringFromDate:[NSDate date]], fileName, @(line), description);
     
     return [NSError errorWithDomain:@"cn.yerl.AYRecord"
                                code:-1000
@@ -38,7 +38,7 @@ AYRecord_EXTERN_STRING_IMP(AYRecordErrorLine)
     
     NSString *desc = [NSString stringWithFormat:@"%@ %@: %@\nAYRecord: %@\n{\n   Error code: %@,\n   Sql: %@,\n   Datasource: %@\n}\n", [[self formatter] stringFromDate:[NSDate date]], fileName, @(line), error, code, sql, datasource];
     
-    sql_printf(desc);
+    ay_record_printf(desc);
     
     return [NSError errorWithDomain:@"cn.yerl.AYRecord"
                                code:-1000

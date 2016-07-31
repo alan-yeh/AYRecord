@@ -9,7 +9,7 @@
 #import <AYRecord/AYRecord.h>
 
 @class Teacher;
-@interface Teacher : AYModel<Teacher *>
+@interface Teacher : AYDbModel<Teacher *>
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, assign) int age;
 

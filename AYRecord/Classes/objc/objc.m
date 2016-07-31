@@ -9,7 +9,7 @@
 #import "objc.h"
 #import <libkern/OSAtomic.h>
 
-void sql_printf(NSString *format, ...){
+void ay_record_printf(NSString *format, ...){
     static OSSpinLock aspect_lock = OS_SPINLOCK_INIT;
     OSSpinLockLock(&aspect_lock);
     

@@ -3,11 +3,11 @@
 //  AYRecord
 //
 //  Created by Alan Yeh on 16/1/1.
-//  Copyright © 2016年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "AYTypeConvertor.h"
+#import "AYDbTypeConvertor.h"
 
-@interface AYIntConvertor : NSObject<AYTypeConvertor>
+@interface AYIntConvertor : NSObject<AYDbTypeConvertor>
 @end

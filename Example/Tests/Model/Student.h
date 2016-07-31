@@ -10,7 +10,7 @@
 
 @class Student;
 
-@interface Student : AYModel<Student *>
+@interface Student : AYDbModel<Student *>
 @property (nonatomic, retain) NSString *name;/**< 姓名 */
 @property (nonatomic, assign) int age;/**< 年龄 */
 @property (nonatomic, retain) NSDate *date;

@@ -10,8 +10,8 @@
 
 typedef NSDictionary<NSString *, id> AYQueryResult;
 typedef NSArray<NSDictionary<NSString *, id> *> AYQueryResultSet;
-@class AYSql;
-@protocol AYTypeConvertor;
+@class AYDbSql;
+@protocol AYDbTypeConvertor;
 
 NS_ASSUME_NONNULL_BEGIN
 @interface AYDbConnection : NSObject
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Make prepared statement
  */
 @interface AYDbConnection(Statement)
-- (nullable AYDbStatement *)prepareStatement:(AYSql *)sql;
+- (nullable AYDbStatement *)prepareStatement:(AYDbSql *)sql;
 @end
 
 @interface AYDbConnection(Transaction)

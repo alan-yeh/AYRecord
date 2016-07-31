@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AYTypeConvertor.h"
+#import "AYDbTypeConvertor.h"
 
-@interface AYUIEdgeInsetsConvertor : NSObject<AYTypeConvertor>
+@interface AYUIEdgeInsetsConvertor : NSObject<AYDbTypeConvertor>
 
 @end

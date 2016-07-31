@@ -1,9 +1,9 @@
 //
-//  AYTypeConvertor.h
+//  AYDbTypeConvertor.h
 //  AYRecord
 //
 //  Created by Alan Yeh on 16/1/1.
-//  Copyright © 2016年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -20,7 +20,7 @@ typedef struct sqlite3_stmt sqlite3_stmt;
  *  Property vlaue convertor
  *  convert property type to objc type
  */
-@protocol AYTypeConvertor<NSObject>
+@protocol AYDbTypeConvertor<NSObject>
 @property (nonatomic, readonly) NSString *type;
 @property (nonatomic, readonly) Class objcType;
 @property (nonatomic, readonly) NSString *dataType;

@@ -27,9 +27,9 @@
     [context registerModel:[Student class]];
     [context initialize];
     
-    NSMutableArray<AYSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
+    NSMutableArray<AYDbSql *> *inserts = [NSMutableArray arrayWithCapacity:20];
     for (NSInteger i = 0; i < 20; i ++) {
-        [inserts addObject:[AYSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
+        [inserts addObject:[AYDbSql buildSql:@"insert into student(name, age) values(?, ?)", [NSString stringWithFormat:@"张%@", @(i)], @(i)]];
     }
     NSAssert([[AYDb main] batchSqls:inserts], @"batch fail");
 }
@@ -65,7 +65,7 @@
 }
 
 - (void)testPage{
-    AYPage *page = [[AYDb main] paginate:1 size:10 withSelect:@"select *" where:@"from student where 1 = ?", @(1)];
+    AYDbPage *page = [[AYDb main] paginate:1 size:10 withSelect:@"select *" where:@"from student where 1 = ?", @(1)];
     XCTAssertNotNil(page);
     XCTAssertEqual(page.pageSize, 10);
     XCTAssertEqual(page.pageIndex, 1);

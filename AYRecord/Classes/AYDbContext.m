@@ -53,12 +53,12 @@
 }
 
 - (void)registerModel:(Class)model{
-    AYParameterAssert([model isSubclassOfClass:[AYModel class]]);
+    AYParameterAssert([model isSubclassOfClass:[AYDbModel class]]);
     [_registedModel addObject:model];
 }
 
-- (void)registerConvertor:(id<AYTypeConvertor>)convertor{
-    AYParameterAssert([convertor conformsToProtocol:@protocol(AYTypeConvertor)]);
+- (void)registerConvertor:(id<AYDbTypeConvertor>)convertor{
+    AYParameterAssert([convertor conformsToProtocol:@protocol(AYDbTypeConvertor)]);
     [AYDbKit addConvertor:convertor];
 }
 
@@ -87,26 +87,26 @@
     AYDbConfig *config = [[AYDbConfig alloc] initWithName:self.configName datasource:self.datasource];
     config.containerFactory = self.containerFactory;
     
-    [AYDbKit addModel:[AYTable class] toConfigMapping:config];
-    [AYDbKit addModel:[AYColumn class] toConfigMapping:config];
+    [AYDbKit addModel:[AYDbTable class] toConfigMapping:config];
+    [AYDbKit addModel:[AYDbColumn class] toConfigMapping:config];
     [AYDbKit addConfig:config];
     
-    NSDictionary<NSString *, AYTable *> *tableConfig = [self buildTableConfig:config];
+    NSDictionary<NSString *, AYDbTable *> *tableConfig = [self buildTableConfig:config];
     BOOL result = [[AYDb use:config.name] tx:^BOOL(AYDb * db){
         for (Class model in _registedModel) {
             NSString *tableName = [model tableName];
-            AYTable *tableStruct = [tableConfig objectForKey:tableName];
+            AYDbTable *tableStruct = [tableConfig objectForKey:tableName];
             
             if (!tableStruct) {
                 //create table
-                tableStruct = [AYTable buildTableWithModel:model];
-                AYAssert([db updateWithSql:[AYSqlBuilder forCreate:tableStruct]], @"execute creation failed");
+                tableStruct = [AYDbTable buildTableWithModel:model];
+                AYAssert([db updateWithSql:[AYDbSqlBuilder forCreate:tableStruct]], @"execute creation failed");
                 AYAssert([db batchSqls:[model migrateForm:0 to:tableStruct.version]], @"execute migration failed");
                 AYAssert([tableStruct save], @"save table info for %@ failed", NSStringFromClass(model));
             }else{
                 //update table
                 AYAssert(tableStruct.type == model, @"init AYRecord fail cause conflict between %@ and %@", NSStringFromClass(tableStruct.type), NSStringFromClass(model));
-                AYTable *currentStruct = [AYTable buildTableWithModel:model];
+                AYDbTable *currentStruct = [AYDbTable buildTableWithModel:model];
                 
                 if (tableStruct.version < currentStruct.version) {
                     
@@ -118,17 +118,17 @@
                     }
                     
                     //find new columns
-                    NSMutableArray<AYColumn *> *newColumns = [NSMutableArray new];
-                    for (AYColumn *column in currentStruct.cols) {
+                    NSMutableArray<AYDbColumn *> *newColumns = [NSMutableArray new];
+                    for (AYDbColumn *column in currentStruct.cols) {
                         if (![tableStruct.cols containsObject:column] && ![existedColumns containsObject:column.name.lowercaseString]) {
                             [newColumns addObject:column];
                         }
                     }
                     
                     //build add column sqls
-                    NSMutableArray<AYSql *> *addSqls = [NSMutableArray new];
-                    for (AYColumn *column in newColumns) {
-                        [addSqls addObject:[AYSqlBuilder forAddColumn:column toTable:currentStruct]];
+                    NSMutableArray<AYDbSql *> *addSqls = [NSMutableArray new];
+                    for (AYDbColumn *column in newColumns) {
+                        [addSqls addObject:[AYDbSqlBuilder forAddColumn:column toTable:currentStruct]];
                     }
                     
                     AYAssert([db batchSqls:addSqls], @"add columns failed");
@@ -150,16 +150,16 @@
     AYAssert(result, @"Initialize failed.");
 }
 
-- (NSDictionary<NSString *, AYTable *> *)buildTableConfig:(AYDbConfig *)config{
+- (NSDictionary<NSString *, AYDbTable *> *)buildTableConfig:(AYDbConfig *)config{
     // initialize
     AYDb *db = [AYDb use:config.name];
     
-    AYTable *configTable = [AYTable buildTableWithModel:AYTable.class];
-    [AYDbKit addModel:AYTable.class toTableMapping:configTable];
-    AYAssert([db updateWithSql:[AYSqlBuilder forCreate:configTable]], @"unable to create config table");
+    AYDbTable *configTable = [AYDbTable buildTableWithModel:AYDbTable.class];
+    [AYDbKit addModel:AYDbTable.class toTableMapping:configTable];
+    AYAssert([db updateWithSql:[AYDbSqlBuilder forCreate:configTable]], @"unable to create config table");
     
-    NSMutableDictionary<NSString *, AYTable *> *result = [NSMutableDictionary new];
-    for (AYTable *table in [[AYTable dao] findAll]) {
+    NSMutableDictionary<NSString *, AYDbTable *> *result = [NSMutableDictionary new];
+    for (AYDbTable *table in [[AYDbTable dao] findAll]) {
         [result setObject:table forKey:[table name]];
     }
     return result;

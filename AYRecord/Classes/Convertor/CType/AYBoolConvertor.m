@@ -3,7 +3,7 @@
 //  AYRecord
 //
 //  Created by Alan Yeh on 16/1/1.
-//  Copyright © 2016年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import "AYBoolConvertor.h"

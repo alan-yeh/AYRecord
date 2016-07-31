@@ -3,7 +3,7 @@
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/10/23.
-//  Copyright © 2015年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import "AYRecord_private.h"
@@ -119,7 +119,7 @@
 
 #define CONVERT_OC_TYPE_AND_RETURN(type) \
     id value = [self.attrs valueForKey:aKey]; \
-    id<AYTypeConvertor> convertor = [AYDbKit convertorForType:[NSString stringWithFormat:@"@\"%s\"", #type]]; \
+    id<AYDbTypeConvertor> convertor = [AYDbKit convertorForType:[NSString stringWithFormat:@"@\"%s\"", #type]]; \
     __unsafe_unretained type *result; \
     [convertor getBuffer:&result fromObject:value]; \
     return result;
@@ -135,7 +135,7 @@
 
 #define CONVERT_TYPE_AND_RETURN(type) \
     id value = [self.attrs valueForKey:aKey]; \
-    id<AYTypeConvertor> convertor = [AYDbKit convertorForType:@(@encode(type))]; \
+    id<AYDbTypeConvertor> convertor = [AYDbKit convertorForType:@(@encode(type))]; \
     type result; \
     [convertor getBuffer:&result fromObject:value]; \
     return result;

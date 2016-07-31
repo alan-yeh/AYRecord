@@ -1,16 +1,16 @@
 //
-//  AYPage.h
+//  AYDbPage.h
 //  AYRecord
 //
 //  Created by Alan Yeh on 15/9/29.
-//  Copyright © 2015年 yerl. All rights reserved.
+//  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 /**
- * AYPage is the result of AYModel.paginate(......) or AYDb.paginate(......)
+ * AYDbPage is the result of AYDbModel.paginate(......) or AYDb.paginate(......)
  */
-@interface AYPage<M> : NSObject
+@interface AYDbPage<M> : NSObject
 @property (nonatomic, strong, nonnull, readonly) NSArray<M> *list;
 @property (nonatomic, assign, readonly) NSInteger pageIndex;
 @property (nonatomic, assign, readonly) NSInteger pageSize;

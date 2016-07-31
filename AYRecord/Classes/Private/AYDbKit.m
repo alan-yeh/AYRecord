@@ -37,13 +37,13 @@ static AYDbConfig *mainConfig;
     return _modelConfigMap ?: (_modelConfigMap = [NSMutableDictionary new]);
 }
 
-+ (NSMutableDictionary<NSString *, AYTable *> *)nameToTable{
-    static NSMutableDictionary<NSString *, AYTable *> *_nameTableMap = nil;
++ (NSMutableDictionary<NSString *, AYDbTable *> *)nameToTable{
+    static NSMutableDictionary<NSString *, AYDbTable *> *_nameTableMap = nil;
     return _nameTableMap ?: (_nameTableMap = [NSMutableDictionary new]);
 }
 
-+ (NSMutableDictionary<NSString *, AYTable *> *)modelToTable{
-    static NSMutableDictionary<NSString *, AYTable *> *_modelTableMap = nil;
++ (NSMutableDictionary<NSString *, AYDbTable *> *)modelToTable{
+    static NSMutableDictionary<NSString *, AYDbTable *> *_modelTableMap = nil;
     return _modelTableMap ?: (_modelTableMap = [NSMutableDictionary new]);
 }
 
@@ -73,7 +73,7 @@ static AYDbConfig *mainConfig;
     [self.modelToConfig setObject:config forKey:NSStringFromClass(model)];
 }
 
-+ (void)addModel:(Class)model toTableMapping:(AYTable *)table{
++ (void)addModel:(Class)model toTableMapping:(AYDbTable *)table{
     [self.modelToTable setObject:table forKey:NSStringFromClass(model)];
     [self.nameToTable setObject:table forKey:[table stringValueForKey:@"name"].lowercaseString];
 }
@@ -86,20 +86,20 @@ static AYDbConfig *mainConfig;
     return [self.modelToConfig objectForKey:NSStringFromClass(model)];
 }
 
-+ (AYTable *)tableForModel:(Class)model{
++ (AYDbTable *)tableForModel:(Class)model{
     return [self.modelToTable objectForKey:NSStringFromClass(model)];
 }
 
-+ (AYTable *)tableForName:(NSString *)tableName{
++ (AYDbTable *)tableForName:(NSString *)tableName{
     return [self.nameToTable objectForKey:[tableName lowercaseString]];
 }
 
 #pragma mark -
-+ (NSMutableSet<id<AYTypeConvertor>> *)convertors{
-    static NSMutableSet<id<AYTypeConvertor>> *_convertors;
++ (NSMutableSet<id<AYDbTypeConvertor>> *)convertors{
+    static NSMutableSet<id<AYDbTypeConvertor>> *_convertors;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSMutableSet<id<AYTypeConvertor>> *set = [NSMutableSet new];
+        NSMutableSet<id<AYDbTypeConvertor>> *set = [NSMutableSet new];
         
 #define CONVERTOR(Type) metamacro_concat(metamacro_concat(AY, Type), Convertor)
 #define REGISTER_CONVERTOR(Type) \
@@ -147,27 +147,27 @@ static AYDbConfig *mainConfig;
     return _convertors;
 }
 
-+ (NSMapTable<NSString *, id<AYTypeConvertor>> *)typeConvertors{
-    static NSMapTable<NSString *, id<AYTypeConvertor>> *_encode_convertor_map;
++ (NSMapTable<NSString *, id<AYDbTypeConvertor>> *)typeConvertors{
+    static NSMapTable<NSString *, id<AYDbTypeConvertor>> *_encode_convertor_map;
     return _encode_convertor_map ?: (_encode_convertor_map = ({
-        NSMapTable<NSString *, id<AYTypeConvertor>> *map = [NSMapTable strongToWeakObjectsMapTable];
-        for (id<AYTypeConvertor> convertor in self.convertors) {
+        NSMapTable<NSString *, id<AYDbTypeConvertor>> *map = [NSMapTable strongToWeakObjectsMapTable];
+        for (id<AYDbTypeConvertor> convertor in self.convertors) {
             [map setObject:convertor forKey:convertor.type];
         }
         map;
     }));
 }
 
-+ (id<AYTypeConvertor>)convertorForType:(NSString *)typeEncoding{
-    id<AYTypeConvertor> convertor = [self.typeConvertors objectForKey:typeEncoding];
++ (id<AYDbTypeConvertor>)convertorForType:(NSString *)typeEncoding{
+    id<AYDbTypeConvertor> convertor = [self.typeConvertors objectForKey:typeEncoding];
     AYAssert(convertor, @"can not find suitable convertor for type: %@", typeEncoding);
     return convertor;
 }
 
-+ (id<AYTypeConvertor>)convertorForObject:(id)obj{
-    static NSMapTable<NSString *, id<AYTypeConvertor>> *numberConvertorMap = nil;
-    static NSMapTable<NSString *, id<AYTypeConvertor>> *valueConvertorMap = nil;
-    static NSMapTable<NSString *, id<AYTypeConvertor>> *otherConvertorMap = nil;
++ (id<AYDbTypeConvertor>)convertorForObject:(id)obj{
+    static NSMapTable<NSString *, id<AYDbTypeConvertor>> *numberConvertorMap = nil;
+    static NSMapTable<NSString *, id<AYDbTypeConvertor>> *valueConvertorMap = nil;
+    static NSMapTable<NSString *, id<AYDbTypeConvertor>> *otherConvertorMap = nil;
     static __weak AYClassConvertor *classConvertor;//AYClassConvertor
     static NSMutableSet<Class> *otherTypes = nil;
     
@@ -178,7 +178,7 @@ static AYDbConfig *mainConfig;
         otherConvertorMap = [NSMapTable strongToWeakObjectsMapTable];
         otherTypes = [NSMutableSet new];
         
-        [self.convertors enumerateObjectsUsingBlock:^(id<AYTypeConvertor>  _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.convertors enumerateObjectsUsingBlock:^(id<AYDbTypeConvertor>  _Nonnull obj, BOOL * _Nonnull stop) {
             if ([obj.objcType isSubclassOfClass:NSNumber.class]) {
                 [numberConvertorMap setObject:obj forKey:obj.type];
             }else if ([obj.objcType isSubclassOfClass:NSValue.class]){
@@ -197,7 +197,7 @@ static AYDbConfig *mainConfig;
     
     returnValIf(!obj, nil);
     
-    id<AYTypeConvertor> convertor = nil;
+    id<AYDbTypeConvertor> convertor = nil;
     Class class = object_getClass(obj);
     
     if (class_isMetaClass(class)) {
@@ -222,7 +222,7 @@ static AYDbConfig *mainConfig;
     return convertor;
 }
 
-+ (void)addConvertor:(id<AYTypeConvertor>)convertor{
++ (void)addConvertor:(id<AYDbTypeConvertor>)convertor{
     [self.convertors addObject:convertor];
 }
 

@@ -12,10 +12,4 @@
 @implementation Teacher
 @dynamic name;
 @dynamic age;
-
-- (NSArray<Student *> *)getStudents{
-    return nil;
-//    return [[Student dao] find:@"select * from student where teacher_id = ?", [self valueForKey:@"id"]];
-}
-
 @end
