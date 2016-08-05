@@ -46,14 +46,14 @@
 }
 
 - (void)bindObject:(id)obj toColumn:(int)idx inStatement:(sqlite3_stmt *)statement{
-    sqlite3_bind_int64(statement, idx, [self AY_hexValueForColor:obj]);
+    sqlite3_bind_int64(statement, idx, [self ay_hexValueForColor:obj]);
 }
 
 - (id)getBuffer:(void *)buffer fromObject:(id)obj{
     returnValIf(obj == nil || [obj isEqual:[NSNull null]], nil);
     if ([obj isKindOfClass:[NSNumber class]]){
         int64_t value = (int64_t)[obj longLongValue];
-        UIColor *color = [self AY_colorWithHex:value];
+        UIColor *color = [self ay_colorWithHex:value];
         memcpy(buffer, (void *)&color, sizeof(id));
         return color;
     }else if ([obj isKindOfClass:[UIColor class]]){
@@ -72,7 +72,7 @@
     returnValIf(obj == nil, nil);
     if ([obj isKindOfClass:[NSNumber class]]) {
         int64_t value = (int64_t)[obj longLongValue];
-        return [self AY_colorWithHex:value];
+        return [self ay_colorWithHex:value];
     }else if ([obj isKindOfClass:[UIColor class]]){
         return obj;
     }
@@ -80,9 +80,9 @@
     return obj;
 }
 
-- (int64_t)AY_hexValueForColor:(UIColor *)color{
+- (int64_t)ay_hexValueForColor:(UIColor *)color{
     CGFloat red, green, blue, alpha;
-    [self AY_getRed:&red green:&green blue:&blue alpha:&alpha from:color];
+    [self ay_getRed:&red green:&green blue:&blue alpha:&alpha from:color];
     
     int64_t iRed, iGreen, iBlue, iAlpha;
     iAlpha = (int64_t)(alpha * 255);
@@ -94,7 +94,7 @@
     return result;
 }
 
-- (void)AY_getRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha from:(UIColor *)color{
+- (void)ay_getRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha from:(UIColor *)color{
     CGColorRef colorRef = [color CGColor];
     const CGFloat *components = CGColorGetComponents(colorRef);
     
@@ -117,7 +117,7 @@
     }
 }
 
-- (UIColor *)AY_colorWithHex:(int64_t)hexValue{
+- (UIColor *)ay_colorWithHex:(int64_t)hexValue{
     return [UIColor colorWithRed:((hexValue & 0xFF0000) >> 16)/255.0f
                            green:((hexValue & 0xFF00) >> 8)/255.0f
                             blue:(hexValue & 0xFF)/255.0f

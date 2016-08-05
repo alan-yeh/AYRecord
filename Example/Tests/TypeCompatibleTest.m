@@ -2,7 +2,7 @@
 //  TypeCompatibleTest.m
 //  AYRecord
 //
-//  Created by PoiSon on 16/7/30.
+//  Created by Alan Yeh on 16/7/30.
 //  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
