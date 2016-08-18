@@ -30,5 +30,5 @@
 #import "AYDbConnection.h"
 #import "AYDbKit.h"
 #import "ayrecord_macros.h"
-#import "objc.h"
+#import "ayrecord_function.h"
 #import "AYDbAssert.h"

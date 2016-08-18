@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Alan Yeh. All rights reserved.
 //
 
-#import "objc.h"
+#import "ayrecord_function.h"
 #import <libkern/OSAtomic.h>
 
 void ay_record_printf(NSString *format, ...){

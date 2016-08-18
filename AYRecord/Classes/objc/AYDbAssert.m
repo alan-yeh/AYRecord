@@ -7,7 +7,7 @@
 //
 
 #import "AYDbAssert.h"
-#import "objc.h"
+#import "ayrecord_function.h"
 #import "AYRecordDefines.h"
 
 AYRecord_EXTERN_STRING_IMP(AYRecordErrorFunction)
