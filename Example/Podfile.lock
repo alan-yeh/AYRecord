@@ -1,16 +1,16 @@
 PODS:
-  - AYRecord (1.0.0)
+  - AYRecord (1.0.1)
 
 DEPENDENCIES:
   - AYRecord (from `../`)
 
 EXTERNAL SOURCES:
   AYRecord:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  AYRecord: e39738d5e57b3c70d392d19dfed58c8158730bce
+  AYRecord: 01a56319dcbc678fae924b70b71acf2bf7b22bdb
 
 PODFILE CHECKSUM: d90c4825607673b75d45bbb0faae9256d8137881
 
-COCOAPODS: 1.0.0
+COCOAPODS: 1.0.1
