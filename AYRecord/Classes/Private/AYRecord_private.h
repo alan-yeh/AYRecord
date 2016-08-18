@@ -6,20 +6,7 @@
 //  Copyright © 2015年 Alan Yeh. All rights reserved.
 //
 
-#define va_array(arg_start) ({ \
-   NSMutableArray *params = [NSMutableArray new]; \
-   NSUInteger count = [arg_start componentsSeparatedByString:@"?"].count - 1; \
-   va_list va; va_start(va, arg_start); \
-   for(NSInteger i = 0; i < count; i ++){ \
-      id arg = va_arg(va, id); \
-      breakIf(!arg); \
-      doIf(arg, [params addObject:arg]); \
-   } \
-   va_end(va); \
-   params; \
-})
-
-#define AYRecord_THREAD_TRANSACTION_CONFIG @"AYRecord_THREAD_TRANSACTION_CONFIG"
+#define AYRECORD_THREAD_TRANSACTION_CONFIG @"AYRECORD_THREAD_TRANSACTION_CONFIG"
 
 #import "AYRecordDefines.h"
 #import "AYDbContext.h"
@@ -42,6 +29,6 @@
 #import "AYDbConfig.h"
 #import "AYDbConnection.h"
 #import "AYDbKit.h"
-#import "convenientmacros.h"
+#import "ayrecord_macros.h"
 #import "objc.h"
 #import "AYDbAssert.h"

@@ -43,13 +43,13 @@
 
 - (void)setTransactionConnection:(AYDbConnection *)connection{
     AYAssert(!_transConnection, @"can not reopen a transaction.");
-    [NSThread currentThread].threadDictionary[AYRecord_THREAD_TRANSACTION_CONFIG] = self.name;
+    [NSThread currentThread].threadDictionary[AYRECORD_THREAD_TRANSACTION_CONFIG] = self.name;
     _transConnection = connection;
 }
 
 - (void)removeTransactionConnection{
     _transConnection = nil;
-    [[NSThread currentThread].threadDictionary removeObjectForKey:AYRecord_THREAD_TRANSACTION_CONFIG];
+    [[NSThread currentThread].threadDictionary removeObjectForKey:AYRECORD_THREAD_TRANSACTION_CONFIG];
 }
 
 - (void)close:(AYDbConnection *)conn{

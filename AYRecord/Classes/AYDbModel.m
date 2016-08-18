@@ -48,7 +48,7 @@
 }
 
 - (NSString *)configName{
-    NSString *transaction_config = [NSThread currentThread].threadDictionary[AYRecord_THREAD_TRANSACTION_CONFIG];
+    NSString *transaction_config = [NSThread currentThread].threadDictionary[AYRECORD_THREAD_TRANSACTION_CONFIG];
     if (transaction_config) {
         return transaction_config;
     }else{
