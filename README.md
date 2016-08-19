@@ -116,7 +116,7 @@ pod "AYRecord"
 
 ```objective-c
    //在Documents/db/database.db中建立数据库
-   AYDbContext *context = [[AYDbContext alloc] initWithDatasource:[[[AYFile documents] child:@"db"] child:@"database.db"]];
+   AYDbContext *context = [[AYDbContext alloc] initWithDatasource:[[[AYFile documents] child:@"db"] child:@"database.db"].path];
    //是否输出SQL到控制台
    context.showSql = YES;
    [context registerModel:[Student class]];
